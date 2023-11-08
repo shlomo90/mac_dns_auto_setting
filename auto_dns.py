@@ -6,7 +6,6 @@ DNS 를 지정된 IP 로 변경해주는 기능이다.
 
 import os
 import subprocess
-from lxml import etree
 from daemon import daemon
 from time import sleep
 from datetime import datetime
@@ -109,12 +108,15 @@ class AutoDNS(daemon):
         set_ips = AP_DNS_MAP.get(ap_name, [])
         logger.debug("set_ips:{}".format(set_ips))
         if set_ips:
-            for dns_ip in self._get_dns_server():
+            current_dns_ips = self._get_dns_server()
+            for dns_ip in current_dns_ips:
                 logger.debug("dns_ip:{}".format(dns_ip))
                 if dns_ip in set_ips:
                     # No need to set dns ip.
                     return
             self._set_dns_server(set_ips)
+            logger.info("DNS Server changed: old({}) -> new({})".format(
+                ' '.join(current_dns_ips), ' '.join(set_ips)))
 
 
 if __name__ == "__main__":
